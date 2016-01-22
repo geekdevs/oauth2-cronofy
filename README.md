@@ -1,10 +1,8 @@
-https://www.cronofy.com/developers/api/
-
 # Cronofy Provider for OAuth 2.0 Client
 
 [![Build Status](https://travis-ci.org/geekdevs/oauth2-cronofy.png?branch=master)](https://travis-ci.org/geekdevs/oauth2-cronofy)
 
-This package provides Cronofy OAuth 2.0 support for the PHP League's [OAuth 2.0 Client](https://github.com/thephpleague/oauth2-client).
+This package provides [Cronofy Calendar](https://www.cronofy.com/developers/api/) OAuth 2.0 support for the PHP League's [OAuth 2.0 Client](https://github.com/thephpleague/oauth2-client).
 
 This package is compliant with [PSR-1][], [PSR-2][], [PSR-4][], and [PSR-7][]. If you notice compliance oversights,
 please send a patch via pull request.
@@ -133,39 +131,6 @@ You can also get all the data from the Account node as a plain-old PHP array wit
 
 ```php
 $accountData = $account->toArray();
-```
-
-### Refreshing a Token
-
-Cronofy does not support refreshing tokens. In order to get a new "refreshed" token, you must send the user through the login-with-Cronofy process again.
-
-From the [Cronofy documentation](https://developers.cronofy.com/docs/cronofy-login/access-tokens#extending):
-
-> Once [the access tokens] expire, your app must send the user through the login flow again to generate a new short-lived token.
-
-The following code will throw a `League\OAuth2\Client\Provider\Exception\CronofyProviderException`.
-
-```php
-$grant = new \League\OAuth2\Client\Grant\RefreshToken();
-$token = $provider->getAccessToken($grant, ['refresh_token' => $refreshToken]);
-```
-
-### Long-lived Access Tokens
-
-Cronofy will allow you to extend the lifetime of an access token by [exchanging a short-lives access token with a long-lived access token](https://developers.cronofy.com/docs/cronofy-login/access-tokens#extending).
-
-Once you obtain a short-lived (default) access token, you can exchange it for a long-lived one.
-
-```php
-try {
-    $token = $provider->getLongLivedAccessToken('short-lived-access-token');
-} catch (Exception $e) {
-    echo 'Failed to exchange the token: '.$e->getMessage();
-    exit();
-}
-
-var_dump($token->getToken());
-# string(217) "CAADAppfn3msBAI7tZBLWg...
 ```
 
 ## Testing
