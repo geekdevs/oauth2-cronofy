@@ -56,7 +56,7 @@ class Cronofy extends AbstractProvider
     {
         $statusCode = $response->getStatusCode();
 
-        if (isset($data['error']) || $statusCode !== 200) {
+        if (isset($data['error']) || $statusCode<200 || $statusCode>299) {
             $error = isset($data['error']) ? $data['error'] : 'Bad status code: ' . $statusCode;
             throw new IdentityProviderException($error, $statusCode, $data);
         }
