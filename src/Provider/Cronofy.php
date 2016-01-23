@@ -13,6 +13,8 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Cronofy extends AbstractProvider
 {
+    const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'account_id';
+
     use BearerAuthorizationTrait;
 
     /**
