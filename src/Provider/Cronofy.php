@@ -57,6 +57,14 @@ class Cronofy extends AbstractProvider
     }
 
     /**
+     * @return string
+     */
+    protected function getScopeSeparator()
+    {
+        return ' ';
+    }
+
+    /**
      * @inheritdoc
      */
     protected function checkResponse(ResponseInterface $response, $data)
