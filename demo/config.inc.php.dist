@@ -1,0 +1,6 @@
+<?php
+return [
+    'clientId'     => '<your-client-id>',
+    'clientSecret' => '<your-client-secret>',
+    'redirectUri'  => 'http://localhost/oauth2-cronofy/demo/callback.php',
+];

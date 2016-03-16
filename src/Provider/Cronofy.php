@@ -1,11 +1,13 @@
 <?php
 namespace Geekdevs\OAuth2\Client\Provider;
 
+use GuzzleHttp\HandlerStack;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
 use Psr\Http\Message\ResponseInterface;
+use Somoza\Psr7\OAuth2Middleware;
 
 /**
  * Represents Cronofy service provider
@@ -16,6 +18,11 @@ class Cronofy extends AbstractProvider
     const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'account_id';
 
     use BearerAuthorizationTrait;
+
+    /**
+     * @var callable
+     */
+    protected $tokenCallback;
 
     /**
      * @inheritdoc
@@ -65,8 +72,38 @@ class Cronofy extends AbstractProvider
     /**
      * @inheritdoc
      */
+    public function getAuthenticatedRequest($method, $url, $token, array $options = [])
+    {
+        $oauth2 = new OAuth2Middleware\Bearer($this, $token, $this->tokenCallback);
+
+        $handlerStack = $this->getHandlerStack();
+        $handlerStack->remove('access_token');
+        $handlerStack->push($oauth2, 'access_token');
+
+        return $this->createRequest($method, $url, null, $options);
+    }
+
+    /**
+     * @param callable $callback
+     */
+    public function setTokenCallback(callable $callback)
+    {
+        $this->tokenCallback = $callback;
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected function createResourceOwner(array $response, AccessToken $token)
     {
         return new CronofyAccount($response);
+    }
+
+    /**
+     * @return HandlerStack
+     */
+    private function getHandlerStack()
+    {
+        return $this->getHttpClient()->getConfig('handler');
     }
 }
