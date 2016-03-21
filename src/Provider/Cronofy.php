@@ -114,4 +114,14 @@ class Cronofy extends AbstractProvider
     {
         return $this->getHttpClient()->getConfig('handler');
     }
+
+    /**
+     * @return array
+     */
+    protected function getDefaultHeaders()
+    {
+        return [
+            'Content-Type' => 'application/json; charset=utf-8'
+        ];
+    }
 }
