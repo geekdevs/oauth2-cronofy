@@ -24,6 +24,25 @@ class Cronofy extends AbstractProvider
      */
     protected $tokenCallback;
 
+
+    /**
+     * Builds request options used for requesting an access token.
+     *
+     * @param  array $params
+     * @return array
+     */
+    protected function getAccessTokenOptions(array $params)
+    {
+        $options = [];
+
+        if ($this->getAccessTokenMethod() === self::METHOD_POST) {
+            $options['body'] = json_encode($params);
+        }
+
+        return $options;
+    }
+
+
     /**
      * @inheritdoc
      */
