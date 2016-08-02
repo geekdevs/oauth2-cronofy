@@ -32,21 +32,58 @@ class DateUtil
 
             if (!$timezone) {
                 throw new InvalidArgumentException(sprintf(
-                    'Cannot create DateTimeZone: invalid timezone "%s"', $timestamp['tzid']
+                    'Cannot create DateTimeZone: invalid timezone "%s"',
+                    $timestamp['tzid']
                 ));
             }
-            $datetime = DateTime::createFromFormat(DateTime::ISO8601, $time, $timezone);
         } else {
-            $datetime = DateTime::createFromFormat(DateTime::ISO8601, $timestamp);
+            $time = $timestamp;
+            $timezone = new DateTimeZone('Etc/Utc');
         }
 
-        if (!$datetime instanceof DateTime) {
+        $usedFormat = null;
+        $dateTime = self::createFromFormats(['Y-m-d', DateTime::ISO8601], $time, $timezone, $usedFormat);
+        if ($usedFormat === 'Y-m-d') {
+            $dateTime->setTime(0, 0, 0);
+        }
+
+        if (!$dateTime instanceof DateTime) {
             throw new InvalidArgumentException(sprintf(
                 'Failed to create DateTime from the given input: "%s"',
                 var_export($timestamp, true)
             ));
         }
 
-        return $datetime;
+        return $dateTime;
+    }
+
+    /**
+     * Tries to create datetime from one of the given formats (stops when it finds one that matches the input).
+     * Otherwise works identical to DateTime::createFromFormat
+     *
+     * @param array             $formats
+     * @param                   $time
+     * @param DateTimeZone|null $timezone
+     * @param string            $usedFormat Output variable holding format which was used
+     *
+     * @return DateTime|false
+     */
+    public static function createFromFormats(array $formats, $time, DateTimeZone $timezone = null, &$usedFormat = null)
+    {
+        foreach ($formats as $format) {
+            if ($timezone) {
+                $datetime = DateTime::createFromFormat($format, $time, $timezone);
+            } else {
+                $datetime = DateTime::createFromFormat($format, $time);
+            }
+
+            if ($datetime instanceof DateTime) {
+                $usedFormat = $format;
+
+                return $datetime;
+            }
+        }
+
+        return false;
     }
 }
