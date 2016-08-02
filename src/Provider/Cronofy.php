@@ -1,7 +1,7 @@
 <?php
 namespace Geekdevs\OAuth2\Client\Provider;
 
-use Geekdevs\OAuth2\Client\Criteria\EventCriteria;
+use Geekdevs\OAuth2\Client\Criteria\FreeBusyCriteria;
 use Geekdevs\OAuth2\Client\Cursor\CursorInterface;
 use Geekdevs\OAuth2\Client\Cursor\PaginatedCursor;
 use Geekdevs\OAuth2\Client\Hydrator\FreeBusyHydrator;
@@ -119,13 +119,13 @@ class Cronofy extends AbstractProvider
     }
 
     /**
-     * @param EventCriteria     $criteria
+     * @param FreeBusyCriteria  $criteria
      * @param AccessToken       $token
      * @param HydratorInterface $hydrator
      *
      * @return CursorInterface | FreeBusy[]
      */
-    public function getFreeBusy(EventCriteria $criteria, AccessToken $token, HydratorInterface $hydrator = null)
+    public function getFreeBusy(FreeBusyCriteria $criteria, AccessToken $token, HydratorInterface $hydrator = null)
     {
         $namespace = 'free_busy';
 

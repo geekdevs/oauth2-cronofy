@@ -132,20 +132,20 @@ class FreeBusy
     /**
      * @param string $status
      *
-     * @return string
+     * @return bool
      */
-    private static function normalizeStatus($status)
+    public static function isValidStatus($status)
     {
-        return self::isValidStatus($status) ? $status : self::STATUS_UNKNOWN;
+        return in_array($status, self::$statuses);
     }
 
     /**
      * @param string $status
      *
-     * @return bool
+     * @return string
      */
-    private static function isValidStatus($status)
+    private static function normalizeStatus($status)
     {
-        return in_array($status, self::$statuses);
+        return self::isValidStatus($status) ? $status : self::STATUS_UNKNOWN;
     }
 }
