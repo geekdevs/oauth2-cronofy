@@ -72,8 +72,13 @@ class PaginatedCursor implements CursorInterface
      * @param AccessToken       $token
      * @param HydratorInterface $hydrator
      */
-    public function __construct($namespace, RequestInterface $request, Cronofy $cronofy, AccessToken $token, HydratorInterface $hydrator = null)
-    {
+    public function __construct(
+        $namespace,
+        RequestInterface $request,
+        Cronofy $cronofy,
+        AccessToken $token,
+        HydratorInterface $hydrator = null
+    ) {
         $this->namespace = $namespace;
         $this->cronofy = $cronofy;
         $this->token = $token;

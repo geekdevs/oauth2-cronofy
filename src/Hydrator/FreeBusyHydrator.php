@@ -1,5 +1,6 @@
 <?php
 namespace Geekdevs\OAuth2\Client\Hydrator;
+
 use Geekdevs\OAuth2\Client\Model\FreeBusy;
 
 /**
