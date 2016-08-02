@@ -111,9 +111,9 @@ class PaginatedCursor implements CursorInterface
         $next = $this->currentDataSet ? next($this->currentDataSet) : false;
 
         if ($next === false) {
-            $dataSet = $this->getNextDataSet();
-            if ($dataSet !== null) {
-                $next = current($dataSet);
+            $this->currentDataSet = $this->getNextDataSet();
+            if ($this->currentDataSet !== null) {
+                $next = current($this->currentDataSet);
             }
         }
 

@@ -32,16 +32,14 @@ class DateUtil
 
             if (!$timezone) {
                 throw new InvalidArgumentException(sprintf(
-                    'Cannot create DateTimeZone: invalid timezone "%s"',
-                    $timestamp['tzid']
+                    'Cannot create DateTimeZone: invalid timezone "%s"', $timestamp['tzid']
                 ));
             }
+            $datetime = DateTime::createFromFormat(DateTime::ISO8601, $time, $timezone);
         } else {
-            $timezone = null; //Autodetect from timestamp
-            $time = $timestamp;
+            $datetime = DateTime::createFromFormat(DateTime::ISO8601, $timestamp);
         }
 
-        $datetime = DateTime::createFromFormat(DateTime::ISO8601, $time, $timezone);
         if (!$datetime instanceof DateTime) {
             throw new InvalidArgumentException(sprintf(
                 'Failed to create DateTime from the given input: "%s"',
