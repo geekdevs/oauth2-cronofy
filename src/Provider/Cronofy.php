@@ -1,6 +1,13 @@
 <?php
 namespace Geekdevs\OAuth2\Client\Provider;
 
+use Geekdevs\OAuth2\Client\Criteria\EventCriteria;
+use Geekdevs\OAuth2\Client\Cursor\CursorInterface;
+use Geekdevs\OAuth2\Client\Cursor\PaginatedCursor;
+use Geekdevs\OAuth2\Client\Hydrator\FreeBusyHydrator;
+use Geekdevs\OAuth2\Client\Hydrator\HydratorInterface;
+use Geekdevs\OAuth2\Client\Model\FreeBusy;
+use Geekdevs\OAuth2\Client\Util\UrlUtil;
 use GuzzleHttp\HandlerStack;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
@@ -15,6 +22,7 @@ use Somoza\Psr7\OAuth2Middleware;
  */
 class Cronofy extends AbstractProvider
 {
+    const BASE_RESOURCE_URL = 'https://api.cronofy.com/v1';
     const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'account_id';
 
     use BearerAuthorizationTrait;
@@ -64,7 +72,7 @@ class Cronofy extends AbstractProvider
      */
     public function getResourceOwnerDetailsUrl(AccessToken $token)
     {
-        return 'https://api.cronofy.com/v1/account';
+        return self::BASE_RESOURCE_URL.'/account';
     }
 
     /**
@@ -108,6 +116,32 @@ class Cronofy extends AbstractProvider
         $handlerStack->push($oauth2, 'access_token');
 
         return $this->createRequest($method, $url, null, $options);
+    }
+
+    /**
+     * @param EventCriteria     $criteria
+     * @param AccessToken       $token
+     * @param HydratorInterface $hydrator
+     *
+     * @return CursorInterface | FreeBusy[]
+     */
+    public function getFreeBusy(EventCriteria $criteria, AccessToken $token, HydratorInterface $hydrator = null)
+    {
+        $namespace = 'free_busy';
+
+        $params = $criteria->toRaw();
+        $qs = UrlUtil::createQueryString($params);
+
+        /* Make a request */
+        $request = $this->getAuthenticatedRequest(
+            'GET',
+            self::BASE_RESOURCE_URL.'/'.$namespace.'?'.$qs,
+            $token
+        );
+
+        $hydrator = $hydrator ?: new FreeBusyHydrator();
+
+        return new PaginatedCursor($namespace, $request, $this, $token, $hydrator);
     }
 
     /**
