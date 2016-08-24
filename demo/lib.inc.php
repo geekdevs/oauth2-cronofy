@@ -1,14 +1,23 @@
 <?php
 class TokenUtils
 {
-    const TOKENS_FILE_PATH = 'tokens.data';
+    const TOKENS_FILE_PATH = __DIR__.'/tokens.data';
 
     /**
      * @param \League\OAuth2\Client\Token\AccessToken $accessToken
+     * @return boolean
      */
     public static function storeAccessToken(\League\OAuth2\Client\Token\AccessToken $accessToken)
     {
-        file_put_contents(self::TOKENS_FILE_PATH, json_encode($accessToken->jsonSerialize()) . "\n", FILE_APPEND);
+        $result = file_put_contents(self::TOKENS_FILE_PATH, json_encode($accessToken->jsonSerialize()) . "\n", FILE_APPEND);
+        if (!$result) {
+            throw new \RuntimeException(sprintf(
+                "Could not store token into file %s - check file permissions",
+                self::TOKENS_FILE_PATH
+            ));
+        }
+
+        return $result;
     }
 
     /**

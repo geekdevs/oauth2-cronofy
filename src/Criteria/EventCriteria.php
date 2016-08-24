@@ -8,7 +8,7 @@ use DateTimeZone;
  * Class EventCriteria
  * @package Geekdevs\OAuth2\Client\Criteria
  */
-class EventCriteria
+class EventCriteria implements CriteriaInterface
 {
     /**
      * @var \DateTimeZone

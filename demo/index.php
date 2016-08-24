@@ -1,4 +1,6 @@
 <?php
+use Geekdevs\OAuth2\Client\Criteria;
+
 /**
  * @var Geekdevs\OAuth2\Client\Provider\Cronofy $provider
  */
@@ -24,11 +26,22 @@ if ($accessToken) {
         TokenUtils::storeAccessToken($token);
     });
 
-    //Make some fun
-    $owner = $provider->getResourceOwner($accessToken);
+    //Get account info
+    echo '<h3>Account Info</h3>';
+    $account = $provider->getAccount($accessToken);
+    var_dump($account);
 
-    echo '<h3>Owner Info</h3>';
-    var_dump($owner->toArray());
+    //Get profiles
+    echo '<h3>Profiles</h3>';
+    $profiles = $provider->getProfiles(null, $accessToken);
+    var_dump($profiles);
+
+    //Get calendars
+    echo '<h3>Calendars</h3>';
+    $calendars = $provider->getCalendars(null, $accessToken);
+    var_dump($calendars);
+
+    die();
 }
 
 
