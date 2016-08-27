@@ -127,7 +127,6 @@ class Cronofy extends AbstractProvider
         return $this->createRequest($method, $url, null, $options);
     }
 
-
     /**
      * @param AccessToken            $token
      *
@@ -141,14 +140,17 @@ class Cronofy extends AbstractProvider
     }
 
     /**
-     * @param ProfileCriteria       $criteria
      * @param AccessToken            $token
+     * @param ProfileCriteria|null   $criteria
      * @param HydratorInterface|null $hydrator
      *
      * @return ArrayIterator | Profile[]
      */
-    public function getProfiles(ProfileCriteria $criteria = null, AccessToken $token, HydratorInterface $hydrator = null)
-    {
+    public function getProfiles(
+        AccessToken $token,
+        ProfileCriteria $criteria = null,
+        HydratorInterface $hydrator = null
+    ) {
         $namespace = 'profiles';
         $hydrator = $hydrator ?: new ProfileHydrator();
 
@@ -165,14 +167,17 @@ class Cronofy extends AbstractProvider
     }
 
     /**
-     * @param CalendarCriteria       $criteria
      * @param AccessToken            $token
+     * @param CalendarCriteria|null  $criteria
      * @param HydratorInterface|null $hydrator
      *
      * @return ArrayIterator | Calendar[]
      */
-    public function getCalendars(CalendarCriteria $criteria = null, AccessToken $token, HydratorInterface $hydrator = null)
-    {
+    public function getCalendars(
+        AccessToken $token,
+        CalendarCriteria $criteria = null,
+        HydratorInterface $hydrator = null
+    ) {
         $namespace = 'calendars';
         $hydrator = $hydrator ?: new CalendarHydrator();
 
@@ -189,14 +194,17 @@ class Cronofy extends AbstractProvider
     }
 
     /**
-     * @param FreeBusyCriteria  $criteria
-     * @param AccessToken       $token
-     * @param HydratorInterface $hydrator
+     * @param AccessToken            $token
+     * @param FreeBusyCriteria|null  $criteria
+     * @param HydratorInterface|null $hydrator
      *
      * @return CursorInterface | FreeBusy[]
      */
-    public function getFreeBusy(FreeBusyCriteria $criteria, AccessToken $token, HydratorInterface $hydrator = null)
-    {
+    public function getFreeBusy(
+        AccessToken $token,
+        FreeBusyCriteria $criteria = null,
+        HydratorInterface $hydrator = null
+    ) {
         $namespace = 'free_busy';
         $hydrator = $hydrator ?: new FreeBusyHydrator();
         $request = $this->getNamespacedAuthenticatedRequest($namespace, $token, $criteria);
@@ -245,8 +253,11 @@ class Cronofy extends AbstractProvider
      *
      * @return \Psr\Http\Message\RequestInterface
      */
-    protected function getNamespacedAuthenticatedRequest($namespace, AccessToken $token, CriteriaInterface $criteria = null)
-    {
+    protected function getNamespacedAuthenticatedRequest(
+        $namespace,
+        AccessToken $token,
+        CriteriaInterface $criteria = null
+    ) {
         if ($criteria) {
             $params = $criteria->toRaw();
             $qs = '?'.UrlUtil::createQueryString($params);
