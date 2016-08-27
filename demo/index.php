@@ -27,23 +27,122 @@ if ($accessToken) {
     });
 
     //Get account info
-    echo '<h3>Account Info</h3>';
     $account = $provider->getAccount($accessToken);
-    var_dump($account);
 
-    //Get profiles
-    echo '<h3>Profiles</h3>';
-    $profiles = $provider->getProfiles(null, $accessToken);
-    var_dump($profiles);
+    /**
+     * Get profiles
+     * @var \Geekdevs\OAuth2\Client\Model\Profile[] $profiles
+     */
+    $profiles = $provider->getProfiles($accessToken);
 
-    //Get calendars
-    echo '<h3>Calendars</h3>';
-    $calendars = $provider->getCalendars(null, $accessToken);
-    var_dump($calendars);
+    /**
+     * Get calendars
+     * @var \Geekdevs\OAuth2\Client\Model\Calendar[] $calendars
+     */
+    $calendars = $provider->getCalendars($accessToken);
+}
+?>
 
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<div class="container">
+    <div class="row">
+        <?php if (isset($account)): ?>
+            <h3>Account</h3>
+            <table class="table table-bordered">
+                <tr>
+                    <th>ID</th>
+                    <td><?=$account->getId();?></td>
+                </tr>
+                <tr>
+                    <th>Name</th>
+                    <td><?=$account->getName();?></td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td><?=$account->getEmail();?></td>
+                </tr>
+                <tr>
+                    <th>Type</th>
+                    <td><?=$account->getType();?></td>
+                </tr>
+                <tr>
+                    <th>Scope</th>
+                    <td><?=$account->getScope();?></td>
+                </tr>
+                <tr>
+                    <th>Default Timezone</th>
+                    <td><?=$account->getDefaultTimezoneName();?></td>
+                </tr>
+            </table>
+        <?php endif; ?>
+
+        <?php if (isset($profiles)): ?>
+        <h3>Profiles</h3>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Provider Name</th>
+                <th>Connected</th>
+                <th>Relink URL</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($profiles as $profile): ?>
+                <?php $pid = $profile->getId(); ?>
+                <tr>
+                    <td><?=$pid;?></td>
+                    <td><?=$profile->getName();?></td>
+                    <td><?=$profile->getProviderName();?></td>
+                    <td><?=$profile->isConnected() ? 'yes' : 'no';?></td>
+                    <td><?=$profile->getRelinkUrl();?></td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+        <?php endif; ?>
+
+        <?php if (isset($calendars)): ?>
+            <h3>Calendars</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Profile ID</th>
+                        <th>Profile Name</th>
+                        <th>Provider Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($calendars as $calendar): ?>
+                    <?php $cid = $calendar->getId(); ?>
+                    <tr>
+                        <td>
+                            <a href="events.php?calendar_id=<?=$cid;?>&token=<?=$searchToken;?>">
+                                <?=$cid;?>
+                            </a>
+                        </td>
+                        <td><?=$calendar->getName();?></td>
+                        <td><?=$calendar->getProfileId();?></td>
+                        <td><?=$calendar->getProfileName();?></td>
+                        <td><?=$calendar->getProviderName();?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php endif; ?>
+    </div>
+</div>
+
+
+<?php
+if ($accessToken) {
     die();
 }
-
 
 $accessTokens = TokenUtils::getStoredAccessTokens();
 $tokensHtml = '';

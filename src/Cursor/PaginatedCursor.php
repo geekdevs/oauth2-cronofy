@@ -151,8 +151,8 @@ class PaginatedCursor implements CursorInterface
     public function rewind()
     {
         $this->idx = null;
-        $this->currentDataSet = null;
         $this->nextRequest = $this->firstRequest;
+        $this->currentDataSet = $this->getNextDataSet();
     }
 
     /**
@@ -160,11 +160,6 @@ class PaginatedCursor implements CursorInterface
      */
     protected function getCurrentDataSet()
     {
-        if ($this->currentDataSet === null) {
-            //Lazy-load data set for the first call
-            $this->currentDataSet = $this->getNextDataSet();
-        }
-
         return $this->currentDataSet;
     }
 

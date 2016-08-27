@@ -61,4 +61,44 @@ class Profile
         $this->connected = !empty($data['profile_connected']);
         $this->relinkUrl = isset($data['profile_relink_url']) ? $data['profile_relink_url'] : null;
     }
+
+    /**
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProviderName()
+    {
+        return $this->providerName;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isConnected()
+    {
+        return $this->connected;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRelinkUrl()
+    {
+        return $this->relinkUrl;
+    }
 }

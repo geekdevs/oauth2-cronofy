@@ -153,6 +153,8 @@ class Cronofy extends AbstractProvider
         ProfileCriteria $criteria = null,
         HydratorInterface $hydrator = null
     ) {
+        $criteria = $criteria ?: new ProfileCriteria([]);
+
         return $this->executeArrayRequest($token, 'profiles', Profile::class, $criteria, $hydrator);
     }
 
@@ -168,6 +170,8 @@ class Cronofy extends AbstractProvider
         CalendarCriteria $criteria = null,
         HydratorInterface $hydrator = null
     ) {
+        $criteria = $criteria ?: new CalendarCriteria([]);
+
         return $this->executeArrayRequest($token, 'calendars', Calendar::class, $criteria, $hydrator);
     }
 
@@ -176,7 +180,7 @@ class Cronofy extends AbstractProvider
      * @param EventCriteria|null     $criteria
      * @param HydratorInterface|null $hydrator
      *
-     * @return CursorInterface | FreeBusy[]
+     * @return CursorInterface | Event[]
      */
     public function getEvents(
         AccessToken $token,
@@ -271,6 +275,8 @@ class Cronofy extends AbstractProvider
         FreeBusyCriteria $criteria = null,
         HydratorInterface $hydrator = null
     ) {
+        $criteria = $criteria ?: new FreeBusyCriteria([]);
+
         return $this->executePaginatedRequest($token, 'free_busy', FreeBusy::class, $criteria, $hydrator);
     }
 
