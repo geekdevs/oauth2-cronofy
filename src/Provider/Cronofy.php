@@ -3,16 +3,16 @@ namespace Geekdevs\OAuth2\Client\Provider;
 
 use Geekdevs\OAuth2\Client\Criteria\CalendarCriteria;
 use Geekdevs\OAuth2\Client\Criteria\CriteriaInterface;
+use Geekdevs\OAuth2\Client\Criteria\EventCriteria;
 use Geekdevs\OAuth2\Client\Criteria\FreeBusyCriteria;
 use Geekdevs\OAuth2\Client\Criteria\ProfileCriteria;
 use Geekdevs\OAuth2\Client\Cursor\CursorInterface;
 use Geekdevs\OAuth2\Client\Cursor\PaginatedCursor;
-use Geekdevs\OAuth2\Client\Hydrator\CalendarHydrator;
-use Geekdevs\OAuth2\Client\Hydrator\FreeBusyHydrator;
 use Geekdevs\OAuth2\Client\Hydrator\HydratorInterface;
-use Geekdevs\OAuth2\Client\Hydrator\ProfileHydrator;
+use Geekdevs\OAuth2\Client\Hydrator\ObjectHydrator;
 use Geekdevs\OAuth2\Client\Model\Account;
 use Geekdevs\OAuth2\Client\Model\Calendar;
+use Geekdevs\OAuth2\Client\Model\Event;
 use Geekdevs\OAuth2\Client\Model\FreeBusy;
 use Geekdevs\OAuth2\Client\Model\Profile;
 use Geekdevs\OAuth2\Client\Util\UrlUtil;
@@ -21,9 +21,11 @@ use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Somoza\Psr7\OAuth2Middleware;
 use ArrayIterator;
+use DateTime;
 
 /**
  * Represents Cronofy service provider
@@ -128,7 +130,7 @@ class Cronofy extends AbstractProvider
     }
 
     /**
-     * @param AccessToken            $token
+     * @param AccessToken $token
      *
      * @return Account
      */
@@ -151,19 +153,7 @@ class Cronofy extends AbstractProvider
         ProfileCriteria $criteria = null,
         HydratorInterface $hydrator = null
     ) {
-        $namespace = 'profiles';
-        $hydrator = $hydrator ?: new ProfileHydrator();
-
-        $request = $this->getNamespacedAuthenticatedRequest($namespace, $token, $criteria);
-        $responseData = $this->getResponse($request);
-        $profilesData = isset($responseData[$namespace]) ? $responseData[$namespace] : [];
-
-        $result = [];
-        foreach ($profilesData as $profileData) {
-            $result[] = $hydrator->hydrate($profileData);
-        }
-
-        return new ArrayIterator($result);
+        return $this->executeArrayRequest($token, 'profiles', Profile::class, $criteria, $hydrator);
     }
 
     /**
@@ -178,20 +168,96 @@ class Cronofy extends AbstractProvider
         CalendarCriteria $criteria = null,
         HydratorInterface $hydrator = null
     ) {
-        $namespace = 'calendars';
-        $hydrator = $hydrator ?: new CalendarHydrator();
-
-        $request = $this->getNamespacedAuthenticatedRequest($namespace, $token, $criteria);
-        $responseData = $this->getResponse($request);
-        $calendarsData = isset($responseData[$namespace]) ? $responseData[$namespace] : [];
-
-        $result = [];
-        foreach ($calendarsData as $calendarData) {
-            $result[] = $hydrator->hydrate($calendarData);
-        }
-
-        return new ArrayIterator($result);
+        return $this->executeArrayRequest($token, 'calendars', Calendar::class, $criteria, $hydrator);
     }
+
+    /**
+     * @param AccessToken            $token
+     * @param EventCriteria|null     $criteria
+     * @param HydratorInterface|null $hydrator
+     *
+     * @return CursorInterface | FreeBusy[]
+     */
+    public function getEvents(
+        AccessToken $token,
+        EventCriteria $criteria = null,
+        HydratorInterface $hydrator = null
+    ) {
+        return $this->executePaginatedRequest($token, 'events', Event::class, $criteria, $hydrator);
+    }
+
+    /**
+     * Creates or updates event
+     *
+     * @param AccessToken $token
+     * @param string      $uid
+     * @param string      $calendarId
+     * @param string      $summary
+     * @param string      $description
+     * @param DateTime    $startsAt
+     * @param DateTime    $endsAt
+     * @param array       $extra
+     */
+    public function persistEvent(
+        AccessToken $token,
+        $uid,
+        $calendarId,
+        $summary,
+        $description,
+        DateTime $startsAt,
+        DateTime $endsAt,
+        array $extra = []
+    ) {
+        $eventData = [
+            'event_id'      => $uid,
+            'summary'       => $summary,
+            'description'   => $description,
+            'start'         => $startsAt->format('c'),
+            'end'           => $endsAt->format('c'),
+        ] + $extra;
+
+        $request = $this->getAuthenticatedRequest(
+            'POST',
+            self::BASE_RESOURCE_URL.'/calendars/'.$calendarId.'/events',
+            $token,
+            [
+                'headers' => [
+                    'Content-Type' => 'application/json; charset=utf-8',
+                ],
+                'body' => json_encode($eventData),
+            ]
+        );
+
+        //Has no response body, will throw IdentityProviderException in case of error
+        $this->getResponse($request);
+    }
+
+
+    /**
+     * @param AccessToken $token
+     * @param string      $uid
+     * @param string      $calendarId
+     */
+    public function deleteEvent(AccessToken $token, $uid, $calendarId)
+    {
+        $request = $this->getAuthenticatedRequest(
+            'DELETE',
+            self::BASE_RESOURCE_URL.'/calendars/'.$calendarId.'/events',
+            $token,
+            [
+                'headers' => [
+                    'Content-Type' => 'application/json; charset=utf-8',
+                ],
+                'body' => json_encode([
+                    'event_id' => $uid,
+                ]),
+            ]
+        );
+
+        //Has no response body, will throw IdentityProviderException in case of error
+        $this->getResponse($request);
+    }
+
 
     /**
      * @param AccessToken            $token
@@ -205,11 +271,35 @@ class Cronofy extends AbstractProvider
         FreeBusyCriteria $criteria = null,
         HydratorInterface $hydrator = null
     ) {
-        $namespace = 'free_busy';
-        $hydrator = $hydrator ?: new FreeBusyHydrator();
-        $request = $this->getNamespacedAuthenticatedRequest($namespace, $token, $criteria);
+        return $this->executePaginatedRequest($token, 'free_busy', FreeBusy::class, $criteria, $hydrator);
+    }
 
-        return new PaginatedCursor($namespace, $request, $this, $token, $hydrator);
+    /**
+     * @param AccessToken $token
+     * @param string      $callbackUrl
+     *
+     * @return string     ID of the created notificaiton channel
+     */
+    public function createNotificationChannel(AccessToken $token, $callbackUrl)
+    {
+        $request = $this->getAuthenticatedRequest(
+            'POST',
+            self::BASE_RESOURCE_URL.'/channels',
+            $token,
+            [
+                'headers' => [
+                    'Content-Type' => 'application/json; charset=utf-8',
+                ],
+                'body' => json_encode([
+                    'callback_url' => $callbackUrl,
+                ]),
+            ]
+        );
+
+        //Will throw IdentityProviderException in case of error
+        $response = $this->getResponse($request);
+
+        return isset($response['channel']['channel_id']) ? $response['channel']['channel_id'] : null;
     }
 
     /**
@@ -247,13 +337,77 @@ class Cronofy extends AbstractProvider
     }
 
     /**
+     * @param AccessToken            $token
+     * @param string                 $namespace
+     * @param string                 $class
+     * @param CriteriaInterface|null $criteria
+     * @param HydratorInterface|null $hydrator
+     *
+     * @return ArrayIterator
+     */
+    private function executeArrayRequest(
+        AccessToken $token,
+        $namespace,
+        $class,
+        CriteriaInterface $criteria = null,
+        HydratorInterface $hydrator = null
+    ) {
+        $hydrator = $hydrator ?: new ObjectHydrator($class);
+        $request = $this->getNamespacedAuthenticatedRequest($namespace, $token, $criteria);
+
+        return $this->hydrateArrayCursor($namespace, $request, $hydrator);
+    }
+
+    /**
+     * @param string            $namespace
+     * @param RequestInterface  $request
+     * @param HydratorInterface $hydrator
+     *
+     * @return ArrayIterator
+     */
+    private function hydrateArrayCursor($namespace, RequestInterface $request, HydratorInterface $hydrator)
+    {
+        $responseData = $this->getResponse($request);
+        $data = isset($responseData[$namespace]) ? $responseData[$namespace] : [];
+
+        $result = [];
+        foreach ($data as $row) {
+            $result[] = $hydrator->hydrate($row);
+        }
+
+        return new ArrayIterator($result);
+    }
+
+    /**
+     * @param AccessToken            $token
+     * @param string                 $namespace
+     * @param string                 $class
+     * @param CriteriaInterface|null $criteria
+     * @param HydratorInterface|null $hydrator
+     *
+     * @return PaginatedCursor
+     */
+    private function executePaginatedRequest(
+        AccessToken $token,
+        $namespace,
+        $class,
+        CriteriaInterface $criteria = null,
+        HydratorInterface $hydrator = null
+    ) {
+        $hydrator = $hydrator ?: new ObjectHydrator($class);
+        $request = $this->getNamespacedAuthenticatedRequest($namespace, $token, $criteria);
+
+        return new PaginatedCursor($namespace, $request, $this, $token, $hydrator);
+    }
+
+    /**
      * @param string                 $namespace
      * @param AccessToken            $token
      * @param CriteriaInterface|null $criteria
      *
      * @return \Psr\Http\Message\RequestInterface
      */
-    protected function getNamespacedAuthenticatedRequest(
+    private function getNamespacedAuthenticatedRequest(
         $namespace,
         AccessToken $token,
         CriteriaInterface $criteria = null
