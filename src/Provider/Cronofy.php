@@ -130,6 +130,39 @@ class Cronofy extends AbstractProvider
     }
 
     /**
+     * @param AccessToken $accessToken
+     *
+     * @return AccessToken
+     */
+    public function refreshAccessTokenIfExpired(AccessToken $accessToken)
+    {
+        if ($accessToken->hasExpired()) {
+            $accessToken = $this->refreshAccessToken($accessToken);
+        }
+
+        return $accessToken;
+    }
+
+    /***
+     * @param AccessToken $oldAccessToken
+     *
+     * @return AccessToken
+     */
+    public function refreshAccessToken(AccessToken $oldAccessToken)
+    {
+        $newAccessToken = $this->getAccessToken('refresh_token', [
+            'refresh_token' => $oldAccessToken->getRefreshToken(),
+        ]);
+
+        //Add old resource owner id to new token (because resource owner id is not returned on token refresh)
+        $newAccessToken = new AccessToken(
+            ['resource_owner_id' => $oldAccessToken->getResourceOwnerId()] + $newAccessToken->jsonSerialize()
+        );
+
+        return $newAccessToken;
+    }
+
+    /**
      * @param AccessToken $token
      *
      * @return Account
