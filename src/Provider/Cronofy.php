@@ -14,6 +14,7 @@ use Geekdevs\OAuth2\Client\Model\Account;
 use Geekdevs\OAuth2\Client\Model\Calendar;
 use Geekdevs\OAuth2\Client\Model\Event;
 use Geekdevs\OAuth2\Client\Model\FreeBusy;
+use Geekdevs\OAuth2\Client\Model\NotificationChannel;
 use Geekdevs\OAuth2\Client\Model\Profile;
 use Geekdevs\OAuth2\Client\Util\UrlUtil;
 use GuzzleHttp\HandlerStack;
@@ -339,6 +340,16 @@ class Cronofy extends AbstractProvider
         $response = $this->getResponse($request);
 
         return isset($response['channel']['channel_id']) ? $response['channel']['channel_id'] : null;
+    }
+
+    /**
+     * @param AccessToken $token
+     *
+     * @return ArrayIterator
+     */
+    public function getNotificationChannels(AccessToken $token)
+    {
+        return $this->executeArrayRequest($token, 'channels', NotificationChannel::class);
     }
 
     /**
