@@ -40,6 +40,12 @@ if ($accessToken) {
      * @var \Geekdevs\OAuth2\Client\Model\Calendar[] $calendars
      */
     $calendars = $provider->getCalendars($accessToken);
+
+    /**
+     * Get notification channels
+     * @var \Geekdevs\OAuth2\Client\Model\NotificationChannel[] $channels
+     */
+    $channels = $provider->getNotificationChannels($accessToken);
 }
 ?>
 
@@ -131,6 +137,28 @@ if ($accessToken) {
                         <td><?=$calendar->getProfileName();?></td>
                         <td><?=$calendar->getProviderName();?></td>
                     </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php endif; ?>
+
+        <?php if (isset($channels)): ?>
+            <h3>Channels</h3>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Callback URL</th>
+                    <th>Filters</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($channels as $channel): ?>
+                        <tr>
+                            <td><?=$channel->getId();?></td>
+                            <td><?=$channel->getCallbackUrl();?></td>
+                            <td><?=json_encode($channel->getFilters());?></td>
+                        </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
