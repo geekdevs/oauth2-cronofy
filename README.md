@@ -31,7 +31,7 @@ Add the following to your `composer.json` file.
 ```json
 {
     "require": {
-        "geekdevs/oauth2-cronofy": "dev-master"
+        "geekdevs/oauth2-cronofy": "^1.0"
     }
 }
 ```
