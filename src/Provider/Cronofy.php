@@ -88,6 +88,34 @@ class Cronofy extends AbstractProvider
     }
 
     /**
+     * Revokes authorization
+     * @see https://www.cronofy.com/developers/api/#revoke-authorization
+     *
+     * @param AccessToken $token
+     * @throws IdentityProviderException
+     */
+    public function revokeToken(AccessToken $token)
+    {
+        $request = $this->createRequest(
+            'POST',
+            'https://api.cronofy.com/oauth/token/revoke',
+            null,
+            [
+                'headers' => [
+                    'Content-Type' => 'application/json; charset=utf-8',
+                ],
+                'body' => json_encode([
+                    'client_id'     => $this->clientId,
+                    'client_secret' => $this->clientSecret,
+                    'token'         => $token->getRefreshToken() ?: $token->getToken(),
+                ]),
+            ]
+        );
+
+        $this->getResponse($request);
+    }
+
+    /**
      * @inheritdoc
      */
     public function getDefaultScopes()
