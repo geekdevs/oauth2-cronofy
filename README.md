@@ -1,6 +1,6 @@
 # Cronofy Provider for OAuth 2.0 Client
 
-[![Build Status](https://travis-ci.org/geekdevs/oauth2-cronofy.png?branch=master)](https://travis-ci.org/geekdevs/oauth2-cronofy)
+[![Build Status](https://travis-ci.org/geekdevs/oauth2-cronofy.svg?branch=master)](https://travis-ci.org/geekdevs/oauth2-cronofy)
 [![Code Coverage](https://img.shields.io/coveralls/geekdevs/oauth2-cronofy.svg)](https://coveralls.io/r/geekdevs/oauth2-cronofy)
 [![Latest Stable Version](https://poser.pugx.org/geekdevs/oauth2-cronofy/v/stable)](https://packagist.org/packages/geekdevs/oauth2-cronofy)
 

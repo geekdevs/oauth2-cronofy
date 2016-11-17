@@ -38,7 +38,7 @@ class DateUtil
             }
         } else {
             $time = $timestamp;
-            $timezone = new DateTimeZone('Etc/Utc');
+            $timezone = new DateTimeZone('Z');
         }
 
         $usedFormat = null;
@@ -73,6 +73,9 @@ class DateUtil
         foreach ($formats as $format) {
             if ($timezone) {
                 $datetime = DateTime::createFromFormat($format, $time, $timezone);
+                if ($datetime) {
+                    $datetime->setTimezone($timezone);
+                }
             } else {
                 $datetime = DateTime::createFromFormat($format, $time);
             }
