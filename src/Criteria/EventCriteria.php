@@ -44,7 +44,7 @@ class EventCriteria implements CriteriaInterface
         if (isset($params['timezone'])) {
             $timezone = $params['timezone'];
         } else {
-            $timezone = new DateTimeZone('Etc/UTC');
+            $timezone = new DateTimeZone('Z');
         }
         $this->setTimezone($timezone);
 
@@ -52,7 +52,7 @@ class EventCriteria implements CriteriaInterface
         if (isset($params['fromDate'])) {
             $fromDate = $params['fromDate'];
         } else {
-            $fromDate = new DateTime('now');
+            $fromDate = new DateTime('now', $timezone);
         }
         $this->setFromDate($fromDate);
 
@@ -60,7 +60,7 @@ class EventCriteria implements CriteriaInterface
         if (isset($params['toDate'])) {
             $toDate = $params['toDate'];
         } else {
-            $toDate = new DateTime('+201days'); //cronofy default
+            $toDate = new DateTime('+201days', $timezone); //cronofy default
         }
         $this->setToDate($toDate);
 
@@ -76,6 +76,14 @@ class EventCriteria implements CriteriaInterface
     public function setCalendars(array $calendars)
     {
         $this->calendars = $calendars;
+    }
+
+    /**
+     * @return null|string[]
+     */
+    public function getCalendars()
+    {
+        return $this->calendars;
     }
 
     /**

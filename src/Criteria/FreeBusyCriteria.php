@@ -20,7 +20,7 @@ class FreeBusyCriteria extends EventCriteria
      *
      * @param array $params
      */
-    public function __construct(array $params)
+    public function __construct(array $params = [])
     {
         parent::__construct($params);
 

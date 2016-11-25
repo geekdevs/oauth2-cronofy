@@ -12,7 +12,7 @@ class ProfileCriteria implements CriteriaInterface
      *
      * @param array $params
      */
-    public function __construct(array $params)
+    public function __construct(array $params = [])
     {
     }
 
