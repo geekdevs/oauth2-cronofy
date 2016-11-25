@@ -121,6 +121,7 @@ if ($accessToken) {
                         <th>Profile ID</th>
                         <th>Profile Name</th>
                         <th>Provider Name</th>
+                        <th>Free/Busy</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -136,6 +137,11 @@ if ($accessToken) {
                         <td><?=$calendar->getProfileId();?></td>
                         <td><?=$calendar->getProfileName();?></td>
                         <td><?=$calendar->getProviderName();?></td>
+                        <td>
+                            <a href="freebusy.php?calendar_id=<?=$cid;?>&token=<?=$searchToken;?>">
+                                View
+                            </a>
+                        </td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
