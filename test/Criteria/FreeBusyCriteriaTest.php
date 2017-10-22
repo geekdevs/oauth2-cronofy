@@ -24,8 +24,8 @@ class FreeBusyCriteriaTest extends \PHPUnit_Framework_TestCase
 
         $criteria = new FreeBusyCriteria($params);
         $this->assertSame($params['timezone'], $criteria->getTimezone());
-        $this->assertSame($params['fromDate'], $criteria->getFromDate());
-        $this->assertSame($params['toDate'], $criteria->getToDate());
+        $this->assertSame($params['fromDate'], $criteria->getFromDate(), '', 1);
+        $this->assertSame($params['toDate'], $criteria->getToDate(), '', 1);
         $this->assertSame($params['calendars'], $criteria->getCalendars());
     }
 
@@ -40,8 +40,8 @@ class FreeBusyCriteriaTest extends \PHPUnit_Framework_TestCase
 
         $criteria = new FreeBusyCriteria();
         $this->assertEquals($utc, $criteria->getTimezone());
-        $this->assertEquals($now, $criteria->getFromDate());
-        $this->assertEquals($then, $criteria->getToDate());
+        $this->assertEquals($now, $criteria->getFromDate(), '', 1);
+        $this->assertEquals($then, $criteria->getToDate(), '', 1);
         $this->assertSame(null, $criteria->getCalendars());
     }
 

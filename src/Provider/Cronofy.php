@@ -113,7 +113,7 @@ class Cronofy extends AbstractProvider
             ]
         );
 
-        $this->getResponse($request);
+        $this->getParsedResponse($request);
     }
 
     /**
@@ -298,7 +298,7 @@ class Cronofy extends AbstractProvider
         );
 
         //Has no response body, will throw IdentityProviderException in case of error
-        $this->getResponse($request);
+        $this->getParsedResponse($request);
     }
 
 
@@ -324,7 +324,7 @@ class Cronofy extends AbstractProvider
         );
 
         //Has no response body, will throw IdentityProviderException in case of error
-        $this->getResponse($request);
+        $this->getParsedResponse($request);
     }
 
 
@@ -368,7 +368,7 @@ class Cronofy extends AbstractProvider
         );
 
         //Will throw IdentityProviderException in case of error
-        $response = $this->getResponse($request);
+        $response = $this->getParsedResponse($request);
 
         return isset($response['channel']['channel_id']) ? $response['channel']['channel_id'] : null;
     }
@@ -448,7 +448,7 @@ class Cronofy extends AbstractProvider
      */
     private function hydrateArrayCursor($namespace, RequestInterface $request, HydratorInterface $hydrator)
     {
-        $responseData = $this->getResponse($request);
+        $responseData = $this->getParsedResponse($request);
         $data = isset($responseData[$namespace]) ? $responseData[$namespace] : [];
 
         $result = [];

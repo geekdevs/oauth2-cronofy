@@ -4,6 +4,7 @@ namespace Geekdevs\OAuth2\Client\Test\Provider;
 use Geekdevs\OAuth2\Client\Provider\Cronofy;
 use League\OAuth2\Client\Token\AccessToken;
 use Mockery as m;
+use Psr\Http\Message\RequestInterface;
 
 class CronofyTest extends \PHPUnit_Framework_TestCase
 {
@@ -57,7 +58,7 @@ class CronofyTest extends \PHPUnit_Framework_TestCase
 
     public function testResourceOwnerDetailsUrl()
     {
-        $token = $this->mockAccessToken();
+        $token = $this->getAccessToken();
 
         $url = $this->provider->getResourceOwnerDetailsUrl($token);
         $uri = parse_url($url);
@@ -96,14 +97,19 @@ class CronofyTest extends \PHPUnit_Framework_TestCase
         /**
          * @var Cronofy | m\Mock $provider
          */
-        $provider = m::mock('Geekdevs\OAuth2\Client\Provider\Cronofy[sendRequest]')
+        $provider = m::mock('Geekdevs\OAuth2\Client\Provider\Cronofy')
+            ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
-        $provider->shouldReceive('sendRequest')
+        $provider->shouldReceive('getAuthenticatedRequest')
+            ->times(1)
+            ->andReturn(m::mock(RequestInterface::class));
+
+        $provider->shouldReceive('getResponse')
             ->times(1)
             ->andReturn($response);
 
-        $token = $this->mockAccessToken();
+        $token = $this->getAccessToken();
         $account = $provider->getResourceOwner($token);
 
         //Check Response
@@ -142,25 +148,30 @@ class CronofyTest extends \PHPUnit_Framework_TestCase
         $response->shouldReceive('getBody')
             ->andReturn('{"error": "Format error"}');
 
-        $provider = m::mock('Geekdevs\OAuth2\Client\Provider\Cronofy[sendRequest]')
+        $provider = m::mock('Geekdevs\OAuth2\Client\Provider\Cronofy')
+            ->makePartial()
             ->shouldAllowMockingProtectedMethods();
+
+        $provider->shouldReceive('getAuthenticatedRequest')
+            ->times(1)
+            ->andReturn(m::mock(RequestInterface::class));
+
+        $provider->shouldReceive('getResponse')
+            ->times(1)
+            ->andReturn($response);
 
         /**
          * @var Cronofy | m\Mock $provider
          */
-        $provider->shouldReceive('sendRequest')
-            ->times(1)
-            ->andReturn($response);
-
-        $token = $this->mockAccessToken();
+        $token = $this->getAccessToken();
         $provider->getResourceOwner($token);
     }
 
     /**
-     * @return AccessToken | m\Mock $token
+     * @return AccessToken $token
      */
-    private function mockAccessToken()
+    private function getAccessToken()
     {
-        return m::mock('League\OAuth2\Client\Token\AccessToken', [['access_token' => 'mock_access_token']]);
+        return new AccessToken(['access_token' => 'demo']);
     }
 }

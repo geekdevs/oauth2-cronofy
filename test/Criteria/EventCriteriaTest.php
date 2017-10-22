@@ -40,8 +40,8 @@ class EventCriteriaTest extends \PHPUnit_Framework_TestCase
 
         $criteria = new EventCriteria();
         $this->assertEquals($utc, $criteria->getTimezone());
-        $this->assertEquals($now, $criteria->getFromDate());
-        $this->assertEquals($then, $criteria->getToDate());
+        $this->assertEquals($now, $criteria->getFromDate(), '', 1);
+        $this->assertEquals($then, $criteria->getToDate(), '', 1);
         $this->assertSame(null, $criteria->getCalendars());
     }
 
