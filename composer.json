@@ -20,8 +20,8 @@
     "minimum-stability": "beta",
     "require": {
         "php": ">=5.5.0",
-        "league/oauth2-client": "^1.1.0",
-        "somoza/oauth2-client-middleware": "^0.2.4"
+        "league/oauth2-client": "^2.2",
+        "somoza/oauth2-client-middleware": "~0.3.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8.21",

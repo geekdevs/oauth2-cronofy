@@ -24,7 +24,8 @@ use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Somoza\Psr7\OAuth2Middleware;
+use Somoza\OAuth2Middleware\OAuth2Middleware;
+use Somoza\OAuth2Middleware\TokenService\Bearer;
 use ArrayIterator;
 use DateTime;
 
@@ -149,11 +150,13 @@ class Cronofy extends AbstractProvider
      */
     public function getAuthenticatedRequest($method, $url, $token, array $options = [])
     {
-        $oauth2 = new OAuth2Middleware\Bearer($this, $token, $this->tokenCallback);
+        $bearerMiddleware = new OAuth2Middleware(
+            new Bearer($this, $token, $this->tokenCallback)
+        );
 
         $handlerStack = $this->getHandlerStack();
         $handlerStack->remove('access_token');
-        $handlerStack->push($oauth2, 'access_token');
+        $handlerStack->push($bearerMiddleware, 'access_token');
 
         return $this->createRequest($method, $url, null, $options);
     }
