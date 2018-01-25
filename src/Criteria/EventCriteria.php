@@ -26,6 +26,11 @@ class EventCriteria implements CriteriaInterface
     protected $toDate;
 
     /**
+     * @var bool
+     */
+    protected $includeManaged = false;
+
+    /**
      * Calendar IDs
      * @var string[] | null
      */
@@ -44,7 +49,7 @@ class EventCriteria implements CriteriaInterface
         if (isset($params['timezone'])) {
             $timezone = $params['timezone'];
         } else {
-            $timezone = new DateTimeZone('Z');
+            $timezone = new DateTimeZone('UTC');
         }
         $this->setTimezone($timezone);
 
@@ -68,6 +73,27 @@ class EventCriteria implements CriteriaInterface
         if (isset($params['calendars'])) {
             $this->setCalendars($params['calendars']);
         }
+
+        //Include managed
+        if (isset($params['includeManaged'])) {
+            $this->setIncludeManaged((bool) $params['includeManaged']);
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isIncludeManaged()
+    {
+        return $this->includeManaged;
+    }
+
+    /**
+     * @param bool $includeManaged
+     */
+    public function setIncludeManaged($includeManaged)
+    {
+        $this->includeManaged = $includeManaged;
     }
 
     /**
@@ -146,10 +172,14 @@ class EventCriteria implements CriteriaInterface
         $toDate->setTimezone($this->timezone);
 
         $requestParams = [
-            'tzid'  => $this->timezone->getName(),
-            'from'  => $fromDate->format('Y-m-d'),
-            'to'    => $toDate->format('Y-m-d'),
+            'tzid'            => $this->timezone->getName(),
+            'from'            => $fromDate->format('Y-m-d'),
+            'to'              => $toDate->format('Y-m-d'),
         ];
+
+        if ($this->includeManaged) {
+            $requestParams['include_managed'] = true;
+        }
 
         if ($this->calendars !== null) {
             $requestParams['calendar_ids'] = $this->calendars;
