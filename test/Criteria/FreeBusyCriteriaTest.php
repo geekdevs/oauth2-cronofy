@@ -34,7 +34,7 @@ class FreeBusyCriteriaTest extends \PHPUnit_Framework_TestCase
      */
     public function testInitDefaults()
     {
-        $utc = new DateTimeZone('Z');
+        $utc = new DateTimeZone('UTC');
         $now = new DateTime('now', $utc);
         $then = new DateTime('+201 days', $utc);
 
