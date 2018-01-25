@@ -172,7 +172,7 @@ class PaginatedCursor implements CursorInterface
             return null;
         }
 
-        $responseData = $this->cronofy->getResponse($this->nextRequest);
+        $responseData = $this->cronofy->getParsedResponse($this->nextRequest);
 
         $pageData = $responseData['pages'] + [
             'current'   => null,
