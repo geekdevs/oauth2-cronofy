@@ -151,7 +151,11 @@ class Cronofy extends AbstractProvider
     public function getAuthenticatedRequest($method, $url, $token, array $options = [])
     {
         $bearerMiddleware = new OAuth2Middleware(
-            new Bearer($this, $token, $this->tokenCallback)
+            new Bearer($this, $token, $this->tokenCallback),
+            [
+                $this->getBaseAuthorizationUrl(),
+                $this->getBaseAccessTokenUrl([]),
+            ]
         );
 
         $handlerStack = $this->getHandlerStack();
