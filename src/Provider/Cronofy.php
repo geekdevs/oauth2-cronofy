@@ -16,6 +16,7 @@ use Geekdevs\OAuth2\Client\Model\Event;
 use Geekdevs\OAuth2\Client\Model\FreeBusy;
 use Geekdevs\OAuth2\Client\Model\NotificationChannel;
 use Geekdevs\OAuth2\Client\Model\Profile;
+use Geekdevs\OAuth2\Client\OptionProvider\NoContentTypePostAuthOptionProvider;
 use Geekdevs\OAuth2\Client\Util\UrlUtil;
 use GuzzleHttp\HandlerStack;
 use League\OAuth2\Client\Provider\AbstractProvider;
@@ -45,24 +46,20 @@ class Cronofy extends AbstractProvider
      */
     protected $tokenCallback;
 
-
     /**
-     * Builds request options used for requesting an access token.
+     * Cronofy constructor.
      *
-     * @param  array $params
-     * @return array
+     * @param array $options
+     * @param array $collaborators
      */
-    protected function getAccessTokenOptions(array $params)
+    public function __construct(array $options = [], array $collaborators = [])
     {
-        $options = [];
-
-        if ($this->getAccessTokenMethod() === self::METHOD_POST) {
-            $options['body'] = json_encode($params);
+        if (empty($collaborators['optionProvider'])) {
+            $collaborators['optionProvider'] = new NoContentTypePostAuthOptionProvider();
         }
 
-        return $options;
+        parent::__construct($options, $collaborators);
     }
-
 
     /**
      * @inheritdoc

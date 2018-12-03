@@ -15,7 +15,7 @@ class DateUtilTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals(
-            new \DateTime('2016-11-09'),
+            new \DateTime('2016-11-09', new \DateTimeZone('UTC')),
             DateUtil::createDateTime('2016-11-09T00:00:00Z')
         );
 
