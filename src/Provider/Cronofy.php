@@ -16,7 +16,6 @@ use Geekdevs\OAuth2\Client\Model\Event;
 use Geekdevs\OAuth2\Client\Model\FreeBusy;
 use Geekdevs\OAuth2\Client\Model\NotificationChannel;
 use Geekdevs\OAuth2\Client\Model\Profile;
-use Geekdevs\OAuth2\Client\OptionProvider\NoContentTypePostAuthOptionProvider;
 use Geekdevs\OAuth2\Client\Util\UrlUtil;
 use GuzzleHttp\HandlerStack;
 use League\OAuth2\Client\Provider\AbstractProvider;
@@ -45,21 +44,6 @@ class Cronofy extends AbstractProvider
      * @var callable
      */
     protected $tokenCallback;
-
-    /**
-     * Cronofy constructor.
-     *
-     * @param array $options
-     * @param array $collaborators
-     */
-    public function __construct(array $options = [], array $collaborators = [])
-    {
-        if (empty($collaborators['optionProvider'])) {
-            $collaborators['optionProvider'] = new NoContentTypePostAuthOptionProvider();
-        }
-
-        parent::__construct($options, $collaborators);
-    }
 
     /**
      * @inheritdoc
@@ -406,16 +390,6 @@ class Cronofy extends AbstractProvider
     private function getHandlerStack()
     {
         return $this->getHttpClient()->getConfig('handler');
-    }
-
-    /**
-     * @return array
-     */
-    protected function getDefaultHeaders()
-    {
-        return [
-            'Content-Type' => 'application/json; charset=utf-8'
-        ];
     }
 
     /**
