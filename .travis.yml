@@ -1,7 +1,7 @@
 language: php
 
 php:
-  - 7.1
+  - 7.4
 
 # This triggers builds to run on the new TravisCI infrastructure.
 # See: http://docs.travis-ci.com/user/workers/container-based-infrastructure/
@@ -10,7 +10,6 @@ sudo: false
 before_script:
   - travis_retry composer self-update
   - travis_retry composer install --no-interaction --prefer-source
-  - travis_retry composer require satooshi/php-coveralls --dev
 
 script:
   - mkdir -p build/logs
