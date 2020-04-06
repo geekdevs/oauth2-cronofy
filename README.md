@@ -1,7 +1,6 @@
 # Cronofy Provider for OAuth 2.0 Client
 
 [![Build Status](https://travis-ci.org/geekdevs/oauth2-cronofy.svg?branch=master)](https://travis-ci.org/geekdevs/oauth2-cronofy)
-[![Code Coverage](https://img.shields.io/coveralls/geekdevs/oauth2-cronofy.svg)](https://coveralls.io/r/geekdevs/oauth2-cronofy)
 [![Latest Stable Version](https://poser.pugx.org/geekdevs/oauth2-cronofy/v/stable)](https://packagist.org/packages/geekdevs/oauth2-cronofy)
 
 This package provides [Cronofy Calendar](https://www.cronofy.com/developers/api/) OAuth 2.0 support for the PHP League's [OAuth 2.0 Client](https://github.com/thephpleague/oauth2-client).
@@ -19,9 +18,7 @@ please send a patch via pull request.
 
 The following versions of PHP are supported.
 
-* PHP 5.5
-* PHP 5.6
-* PHP 7.0
+* PHP 7.4
 
 ## Installation
 
@@ -30,7 +27,7 @@ Add the following to your `composer.json` file.
 ```json
 {
     "require": {
-        "geekdevs/oauth2-cronofy": "^1.0"
+        "geekdevs/oauth2-cronofy": "^2.0"
     }
 }
 ```
