@@ -141,7 +141,7 @@ class Cronofy extends AbstractProvider
 
         $handlerStack = $this->getHandlerStack();
         $handlerStack->remove('access_token');
-        $handlerStack->push($bearerMiddleware, 'access_token');
+        $handlerStack->before('prepare_body', $bearerMiddleware, 'access_token');
 
         return $this->createRequest($method, $url, null, $options);
     }
