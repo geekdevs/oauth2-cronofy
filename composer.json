@@ -20,7 +20,7 @@
     "minimum-stability": "beta",
     "require": {
         "php": "^7.4",
-        "league/oauth2-client": "^2.4",
+        "league/oauth2-client": "^2.5",
         "somoza/oauth2-client-middleware": "~0.3.0"
     },
     "require-dev": {
